@@ -1,0 +1,28 @@
+site_name: Sanitary
+repo_url: https://github.com/berislavlopac/sanitizer
+site_description: Utility to remove or replace sensitive data from complex structures.
+site_author: Berislav Lopac <berislav@lopac.net>
+use_directory_urls: false
+theme:
+  name: material
+#  logo: assets/plunger-logo.png
+#  favicon: assets/plunger-favicon.png
+plugins:
+  - search
+  - mkapi
+markdown_extensions:
+  - abbr
+  - attr_list
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - toc:
+      permalink: yes
+  - codehilite:
+      guess_lang: no
+nav:
+  - index.md
+  - API Reference: reference.md

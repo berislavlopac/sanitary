@@ -1,0 +1,88 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+name = "sanitary"
+version = "0.0.1"
+description = "Utility to remove or replace sensitive data from complex structures."
+readme = "docs/index.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+keywords = []
+authors = [
+  { name = "Berislav Lopac", email = "berislav@lopac.net" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = []
+
+[project.urls]
+repository = "https://github.com/berislavlopac/sanitary"
+issues = "https://github.com/berislavlopac/sanitary/issues"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pytest-spec",
+    "mypy",
+    "ruff",
+    "black",
+    "isort",
+    "pydocstyle[toml]",
+    "structlog",
+    "tox>=4.0.16",
+    "tox-pdm>=0.6.1",
+]
+docs = [
+  "mkdocs",
+  "mkapi",
+  "mkdocs-material",
+  "pymdown-extensions",
+  "jinja2 < 3.1.0",
+]
+
+[tool.black]
+line-length = 96
+target-version = ['py38', 'py39', 'py310', 'py311']
+verbose = false
+skip-string-normalization = false
+
+[tool.isort]
+profile = "black"
+line_length = 96
+filter_files = true
+force_alphabetical_sort_within_sections = true
+
+[tool.coverage.run]
+source = [ "sanitary/", ]
+omit = [ "*/tests/*", "src/tests/*", ]
+
+[tool.coverage.report]
+skip_covered = false
+show_missing = true
+fail_under = 90
+exclude_lines = ["pragma: no cover", "@abstract", "if TYPE_CHECKING:"]
+
+[tool.mypy]
+mypy_path = "sanitary/"
+ignore_missing_imports = true
+
+[tool.pydocstyle]
+add-ignore = "D105, D107, D212, D401"
+convention = "google"
+match-dir = "(?!tests).*"
+
+[tool.ruff]
+line-length = 96
+target-version = "py38"
+format = "grouped"
