@@ -2,7 +2,7 @@
 
 Sanitary is a simple utility that can remove/mask sensitive information, such as PII, from any data structure. It also includes a Structlog-compatible [processor](https://www.structlog.org/en/stable/processors.html) to clean up structured log messages.
 
-It will automatically mask sensitive information such as PII, login credentials and the like. By default, the masked data is replaced by a generic string, which can be configured to use a hashing function instead.
+It will automatically mask information marked as sensitive. By default, the masked data is replaced by a generic string, which can be configured to use a hashing function instead.
 
 ## Installation
 

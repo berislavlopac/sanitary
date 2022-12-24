@@ -1,5 +1,5 @@
 site_name: Sanitary
-repo_url: https://github.com/berislavlopac/sanitizer
+repo_url: https://github.com/berislavlopac/sanitary
 site_description: Utility to remove or replace sensitive data from complex structures.
 site_author: Berislav Lopac <berislav@lopac.net>
 use_directory_urls: false

@@ -28,6 +28,7 @@ dependencies = []
 [project.urls]
 repository = "https://github.com/berislavlopac/sanitary"
 issues = "https://github.com/berislavlopac/sanitary/issues"
+documentation = "https://sanitary.readthedocs.io"
 
 [tool.pdm.dev-dependencies]
 dev = [
