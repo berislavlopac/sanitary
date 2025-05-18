@@ -6,7 +6,8 @@ site_author: Berislav Lopac <berislav@lopac.net>
 use_directory_urls: false
 theme:
   name: material
-#  logo: assets/plunger-logo.png
+  icon:
+    logo: fontawesome/solid/pump-soap
 #  favicon: assets/plunger-favicon.png
   features:
     - search.suggest
