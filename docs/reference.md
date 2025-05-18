@@ -1,5 +1,5 @@
 # API Reference
 
-## ![mkapi](sanitary.Sanitizer)
+::: sanitary.Sanitizer
 
-## ![mkapi](sanitary.StructlogSanitizer)
+::: sanitary.StructlogSanitizer

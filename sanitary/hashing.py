@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import hashlib
-from typing import Callable, Optional, Protocol, runtime_checkable, Union
+from collections.abc import Callable
+from typing import Protocol, runtime_checkable
 
 HASHLIB_FUNCTIONS = tuple(
     getattr(hashlib, name) for name in dir(hashlib) if not name.startswith("_")
@@ -44,7 +45,7 @@ class HashObjectProtocol(Protocol):
         sharing a common initial substring.
         """
 
-    def digest(self, length: Optional[int] = None) -> str:
+    def digest(self, length: int | None = None) -> str:  # noqa: F841
         """
         Return the digest of the data passed to the update() method so far.
 
@@ -59,7 +60,7 @@ class HashObjectProtocol(Protocol):
             length: Optional length in bytes, required of SHAKE algorithms.
         """
 
-    def hexdigest(self, length: Optional[int] = None) -> str:
+    def hexdigest(self, length: int | None = None) -> str:  # noqa: F841
         """
         Like `digest()`, except containing only hexadecimal digits.
 
@@ -70,7 +71,7 @@ class HashObjectProtocol(Protocol):
             length: Optional length in bytes, required of SHAKE algorithms.
         """
 
-    def update(self, obj: bytes, /) -> None:
+    def update(self, obj: bytes, /) -> None:  # noqa: F841
         """
         Update the hash object with the bytes-like object.
 
@@ -82,4 +83,4 @@ class HashObjectProtocol(Protocol):
         """
 
 
-ReplacementType = Union[str, Callable[[str], str], Callable[[bytes], HashObjectProtocol]]
+ReplacementType = str | Callable[[str], str] | Callable[[bytes], HashObjectProtocol]

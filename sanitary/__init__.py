@@ -3,15 +3,18 @@
 # SPDX-License-Identifier: MIT
 
 """Custom processor for cleaning sensitive data."""
+
 from __future__ import annotations
 
 import hashlib
 import json
 import re
 from collections import ChainMap
+from collections.abc import Iterable
 from decimal import Decimal
 from functools import singledispatchmethod
-from typing import Any, AnyStr, cast, Iterable, Pattern, Set, TYPE_CHECKING
+from re import Pattern
+from typing import TYPE_CHECKING, Any, AnyStr, cast
 
 if TYPE_CHECKING:
     from structlog.types import EventDict, WrappedLogger
@@ -42,8 +45,8 @@ class Sanitizer:
         message: str = "#### WARNING: Message replaced due to sensitive information.",
     ):
         self.replacement: ReplacementType = replacement
-        self.keys: Set = set(map(str.lower, keys))
-        self.patterns: Set[Pattern[AnyStr]] = set(map(re.compile, patterns))  # type: ignore
+        self.keys: set = set(map(str.lower, keys))
+        self.patterns: set[Pattern[AnyStr]] = set(map(re.compile, patterns))  # type: ignore
         self.message: str = message
 
     @singledispatchmethod
@@ -121,7 +124,7 @@ def _replace(value: Any, replacement: ReplacementType):
 class StructlogSanitizer(Sanitizer):
     """Structlog processor for cleaning up logging context by masking sensitive data."""
 
-    def __call__(self, logger: WrappedLogger, name: str, event_dict: EventDict) -> EventDict:
+    def __call__(self, logger: WrappedLogger, name: str, event_dict: EventDict) -> EventDict:  # noqa: F841
         """
         Makes the sanitizer a callable, compatible with the Structlog processor API.
 

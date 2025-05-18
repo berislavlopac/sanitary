@@ -1,9 +1,9 @@
-# sanitary
+# Sanitary
 
 [![PyPI - Version](https://img.shields.io/pypi/v/sanitary.svg)](https://pypi.org/project/sanitary)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/sanitary.svg)](https://pypi.org/project/sanitary)
 
-Sanitary is a utility for removing or replacing sensitive data from complex structures.
+Sanitary is a utility for removing or replacing sensitive data from data structures.
 
 
 ## Installation

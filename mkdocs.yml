@@ -1,4 +1,5 @@
 site_name: Sanitary
+site_url: https://sanitary.readthedocs.io
 repo_url: https://github.com/berislavlopac/sanitary
 site_description: Utility to remove or replace sensitive data from complex structures.
 site_author: Berislav Lopac <berislav@lopac.net>
@@ -7,6 +8,28 @@ theme:
   name: material
 #  logo: assets/plunger-logo.png
 #  favicon: assets/plunger-favicon.png
+  features:
+    - search.suggest
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
 plugins:
   - search
   - mkapi

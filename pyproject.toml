@@ -1,13 +1,9 @@
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
-
 [project]
 name = "sanitary"
-version = "0.0.1"
+version = "0.1.0"
 description = "Utility to remove or replace sensitive data from complex structures."
 readme = "docs/index.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 keywords = []
 authors = [
@@ -30,39 +26,92 @@ repository = "https://github.com/berislavlopac/sanitary"
 issues = "https://github.com/berislavlopac/sanitary/issues"
 documentation = "https://sanitary.readthedocs.io"
 
-[tool.pdm.dev-dependencies]
-dev = [
-    "pytest",
-    "pytest-cov",
-    "pytest-spec",
-    "mypy",
-    "ruff",
-    "black",
-    "isort",
-    "pydocstyle[toml]",
-    "structlog",
-    "tox>=4.0.16",
-    "tox-pdm>=0.6.1",
-]
+[project.optional-dependencies]
 docs = [
   "mkdocs",
   "mkapi",
   "mkdocs-material",
   "pymdown-extensions",
-  "jinja2 < 3.1.0",
+  "jinja2 >= 3.1.3",
 ]
 
-[tool.black]
-line-length = 96
-target-version = ['py38', 'py39', 'py310', 'py311']
-verbose = false
-skip-string-normalization = false
+[dependency-groups]
+dev = [
+    "ruff",
+    "pydocstyle[toml]",
+    "deptry>=0.23.0",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-spec",
+    "mypy",
+    "structlog",
+    "tox>=4.26.0",
+    "tox-uv>=1.25.0",
+]
 
-[tool.isort]
-profile = "black"
-line_length = 96
-filter_files = true
-force_alphabetical_sort_within_sections = true
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+default-groups = "all"
+
+[tool.ruff]
+line-length = 96
+output-format = "grouped"
+
+[tool.ruff.lint]
+# see https://docs.astral.sh/ruff/settings/#lint
+select = [  # see https://docs.astral.sh/ruff/rules/
+    "E4", "E7", "E9",  # basic pycodestyle rules
+    "F",        # Pyflakes rules
+    "W",        # pycodestyle warnings
+    "C90",      # McCabe complexity
+    "N",        # PEP8 naming conventions
+    "I",        # import statements linting and formatting
+    "PLR",      # Pylint refactoring recommendations
+    "PTH",      # recommends to use pathlib instead of os.path
+    "UP",       # pyupgrade suggestions
+    "BLE",      # locates blind exception capture
+    "B",        # locates possible bugs and design problems
+    "A",        # locates shadowing of builtin names
+    "C4",       # locates possible issues with comprehensions
+    "DTZ",      # locates incorrect use of timezone information
+    "PIE",      # miscellaneous linting rules
+    "TRY",      # locates potential exception handling antipatterns
+    "PERF",     # locates potential performance issues
+    "RUF",      # various Ruff-specific linting rules
+    "S",        # various insecure code, with bandit
+    "ERA",      # eradicate: commented-out code
+]
+external = [
+    "F841",     # vulture uses this code for ignoring unused names
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+    "F401",     # allow unused imports
+    "F403",     # allow `import *`
+]
+"tests/*" = [
+    "PLR0913",  # unlimited function arguments
+    "S101",     # allow asserts
+    "S105",     # allow harcoded passwords
+    "N802",     # allow variable case in test names
+    "PLR2004",  # allow magic values in comparisons
+]
+
+[tool.ruff.format]
+# see https://docs.astral.sh/ruff/settings/#format
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = false
 
 [tool.coverage.run]
 source = [ "sanitary/", ]
@@ -83,7 +132,11 @@ add-ignore = "D105, D107, D212, D401"
 convention = "google"
 match-dir = "(?!tests).*"
 
-[tool.ruff]
-line-length = 96
-target-version = "py38"
-format = "grouped"
+[tool.deptry.per_rule_ignores]
+DEP002 = [
+    "mkdocs",
+    "mkapi",
+    "mkdocs-material",
+    "pymdown-extensions",
+    "jinja2",
+]
