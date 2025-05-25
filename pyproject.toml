@@ -140,3 +140,30 @@ DEP002 = [
     "pymdown-extensions",
     "jinja2",
 ]
+
+
+[tool.tox]
+isolated_build = true
+envlist = ["checks", "py310", "py311", "py312", "py313"]
+
+[tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
+skip_install = true
+groups = ["test"]
+commands = [
+    ["pytest", "--cov", "--spec", "--junitxml=test-reports{/}{envname}-junit.xml"],
+    ["coverage", "xml", "-o", "test-reports{/}{envname}-coverage.xml"],
+    ["mypy", "--install-types", "--non-interactive", "sanitary/"],
+]
+
+[tool.tox.env.checks]
+runner = "uv-venv-lock-runner"
+groups = ["dev"]
+extras = ["docs"]
+skip-install = true
+commands = [
+    ["deptry", "."],
+    ["ruff", "format", "--check", "."],
+    ["ruff", "check", "."],
+    ["pydocstyle", "sanitary/"],
+]
