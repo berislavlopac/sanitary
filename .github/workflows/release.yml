@@ -6,7 +6,7 @@ on:
       - "*.*.*"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: release-${{ github.ref }}
@@ -41,6 +41,9 @@ jobs:
     name: build, publish, release
     needs: [checks, test]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write    # create the GitHub Release
+      id-token: write    # mint the OIDC token for PyPI trusted publishing
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,8 +55,9 @@ jobs:
       # Extract notes first: a missing changelog section aborts before publishing.
       - run: python3 scripts/extract_changelog.py "$GITHUB_REF_NAME" /tmp/release-notes.txt
       - run: uv build
+      # Trusted publishing (OIDC) via the id-token permission; no stored token.
       # --check-url lets a re-run skip files already on PyPI instead of failing.
-      - run: uv publish --token "${{ secrets.PYPI_TOKEN }}" --check-url https://pypi.org/simple/sanitary/
+      - run: uv publish --trusted-publishing always --check-url https://pypi.org/simple/sanitary/
       - name: Create or update the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}

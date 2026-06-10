@@ -127,7 +127,8 @@ and get a recommended version from the pending fragments with `just suggest-vers
 `CHANGELOG.md` section with `towncrier` (the date is auto-stamped — fragments carry
 none), commits, tags, and pushes. Pushing the tag triggers
 `.github/workflows/release.yml`: it re-runs the checks + test matrix and, only if
-green, builds the package, publishes it to PyPI (needs a `PYPI_TOKEN` repo secret),
+green, builds the package, publishes it to PyPI via trusted publishing (OIDC — no
+stored token; the publisher is configured on PyPI for this repo + `release.yml`),
 and creates a GitHub Release whose notes come from the new `CHANGELOG.md` section
 (`scripts/extract_changelog.py`).
 
