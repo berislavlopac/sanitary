@@ -13,8 +13,8 @@ value regex patterns, it walks any nested structure and replaces matching data
 with a placeholder (or a hash, for trackable-but-masked values).
 
 It is a **library**, imported by other projects (e.g. `unclogger`). Treat the
-public API as a contract — it changes only deliberately, with a `CHANGELOG.md`
-entry.
+public API as a contract — it changes only deliberately, with a release-notes
+fragment (`just news`, see Releasing).
 
 ### Keep it dependency-free
 
@@ -46,7 +46,8 @@ deliberate decision — staying dependency-free is a feature of this library.
 - `replacement` may be a string or a callable (incl. a `hashlib` function, for
   trackable hashing).
 
-Keep these behaviours stable; update `docs/` and `CHANGELOG.md` on any change.
+Keep these behaviours stable; update `docs/` and add a release-notes fragment
+(`just news`, see Releasing) on any change.
 
 ## Environment & workflow
 
@@ -65,7 +66,11 @@ Keep these behaviours stable; update `docs/` and `CHANGELOG.md` on any change.
 | `just check` | `lint` + `type` + `analyze` — the pre-push gate. |
 | `just reformat` | Auto-fix format + import order (`[confirm]` recipe). |
 | `just docs` / `just docs-build` | Serve / build the mkdocs site. |
-| `just commits` | Commits since the last tag (for the changelog). |
+| `just commits` | Commits since the last tag. |
+| `just news <type> [id]` | Add a news fragment (wraps `towncrier create`). |
+| `just changelog-draft <version>` | Preview the collated changelog (no write). |
+| `just suggest-version` | Recommend the next version from pending fragments. |
+| `just release <version>` | Collate changelog, commit, tag, push (`[confirm]`). |
 
 Multi-version testing (py310–313) is via **tox** (config in `pyproject.toml`
 under `[tool.tox]`, `uv-venv-lock-runner`). The pre-push quality gate is
@@ -104,6 +109,27 @@ PRs it runs the `checks` env and the py310–313 test matrix via
   a PR that already has feedback; prefer a merge.
 - Stay on the task at hand - note an incidental or unrelated issue in one line
   and move on, rather than rabbit-holing into it.
+
+## Releasing
+
+The version lives in **exactly one place: the git tag**. `pyproject.toml` declares
+`dynamic = ["version"]` and `hatch-vcs` derives it from the tag at build time, so
+there is no version number to bump by hand (`sanitary.__version__` reads it back via
+`importlib.metadata`; untagged checkouts fall back to `0.0.0`).
+
+Changes are recorded as **news fragments** in `release-notes/`, one file per change
+named `<id>.<type>.md` (see `release-notes/README.md` for the types and the version
+bump each implies) — not by editing `CHANGELOG.md` directly. Add one with
+`just news <type> [id]`, preview the result with `just changelog-draft <version>`,
+and get a recommended version from the pending fragments with `just suggest-version`.
+
+`just release <version>` runs `check` + `test`, folds the fragments into a dated
+`CHANGELOG.md` section with `towncrier` (the date is auto-stamped — fragments carry
+none), commits, tags, and pushes. Pushing the tag triggers
+`.github/workflows/release.yml`: it re-runs the checks + test matrix and, only if
+green, builds the package, publishes it to PyPI (needs a `PYPI_TOKEN` repo secret),
+and creates a GitHub Release whose notes come from the new `CHANGELOG.md` section
+(`scripts/extract_changelog.py`).
 
 ## Docs
 

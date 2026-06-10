@@ -1,6 +1,6 @@
 [project]
 name = "sanitary"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Utility to remove or replace sensitive data from complex structures."
 readme = "docs/index.md"
 requires-python = ">=3.10"
@@ -40,6 +40,7 @@ dev = [
     "ruff",
     "pydocstyle[toml]",
     "deptry>=0.23.0",
+    "towncrier>=24.8.0",
 ]
 test = [
     "pytest",
@@ -52,8 +53,16 @@ test = [
 ]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+# Used when building outside a tagged checkout (sdist without .git, or a shallow
+# clone such as Read the Docs). Tagged builds derive the version from the tag.
+fallback_version = "0.0.0"
 
 [tool.uv]
 default-groups = "all"
@@ -102,6 +111,10 @@ external = [
     "N802",     # allow variable case in test names
     "PLR2004",  # allow magic values in comparisons
 ]
+"scripts/*" = [
+    "S603",     # subprocess call with trusted, hardcoded arguments
+    "S607",     # partial executable path (e.g. "git") is fine for dev tooling
+]
 
 [tool.ruff.format]
 # see https://docs.astral.sh/ruff/settings/#format
@@ -139,7 +152,51 @@ DEP002 = [
     "mkdocs-materialx",
     "pymdown-extensions",
     "jinja2",
+    "towncrier",  # release-time CLI tool, never imported
 ]
+
+[tool.towncrier]
+directory = "release-notes"
+filename = "CHANGELOG.md"
+start_string = "<!-- towncrier release notes start -->\n"
+title_format = "## [{version}] - {project_date}"
+underlines = ["", "", ""]
+ignore = ["README.md"]
+
+[[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking Changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecated"
+name = "Deprecated"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removed"
+name = "Removed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
 
 
 [tool.tox]

@@ -13,6 +13,8 @@ from collections import ChainMap
 from collections.abc import Iterable
 from decimal import Decimal
 from functools import singledispatchmethod
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _version
 from re import Pattern
 from typing import TYPE_CHECKING, Any, AnyStr, cast
 
@@ -20,6 +22,11 @@ if TYPE_CHECKING:
     from structlog.types import EventDict, WrappedLogger
 
 from .hashing import HASHLIB_FUNCTIONS, HashObjectProtocol, ReplacementType
+
+try:
+    __version__ = _version("sanitary")
+except PackageNotFoundError:  # pragma: no cover
+    __version__ = "0.0.0"
 
 
 class Sanitizer:

@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    name: lint + types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uvx --with tox-uv tox -e checks
+
+  test:
+    name: test (${{ matrix.toxenv }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toxenv: [py310, py311, py312, py313]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uvx --with tox-uv tox -e ${{ matrix.toxenv }}
+
+  publish:
+    name: build, publish, release
+    needs: [checks, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # hatch-vcs derives the version from the tag, so fetch full history/tags.
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # Extract notes first: a missing changelog section aborts before publishing.
+      - run: python3 scripts/extract_changelog.py "$GITHUB_REF_NAME" /tmp/release-notes.txt
+      - run: uv build
+      # --check-url lets a re-run skip files already on PyPI instead of failing.
+      - run: uv publish --token "${{ secrets.PYPI_TOKEN }}" --check-url https://pypi.org/simple/sanitary/
+      - name: Create or update the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRERELEASE=""
+          if [[ "$GITHUB_REF_NAME" =~ \.[0-9]+(a|b|rc)[0-9] ]]; then PRERELEASE="--prerelease"; fi
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --notes-file /tmp/release-notes.txt $PRERELEASE
+          else
+            gh release create "$GITHUB_REF_NAME" --notes-file /tmp/release-notes.txt $PRERELEASE
+          fi
