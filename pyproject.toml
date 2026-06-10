@@ -30,7 +30,7 @@ documentation = "https://sanitary.readthedocs.io"
 [project.optional-dependencies]
 docs = [
   "mkdocs",
-  "mkapi",
+  "mkapi >= 4",
   "mkdocs-materialx",
   "pymdown-extensions",
   "jinja2 >= 3.1.3",
