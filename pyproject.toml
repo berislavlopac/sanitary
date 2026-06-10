@@ -16,6 +16,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
@@ -201,7 +202,7 @@ showcontent = true
 
 [tool.tox]
 isolated_build = true
-envlist = ["checks", "py310", "py311", "py312", "py313"]
+envlist = ["checks", "py310", "py311", "py312", "py313", "py314"]
 
 [tool.tox.env_run_base]
 runner = "uv-venv-lock-runner"

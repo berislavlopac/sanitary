@@ -72,11 +72,11 @@ Keep these behaviours stable; update `docs/` and add a release-notes fragment
 | `just suggest-version` | Recommend the next version from pending fragments. |
 | `just release <version>` | Collate changelog, commit, tag, push (`[confirm]`). |
 
-Multi-version testing (py310–313) is via **tox** (config in `pyproject.toml`
+Multi-version testing (py310–314) is via **tox** (config in `pyproject.toml`
 under `[tool.tox]`, `uv-venv-lock-runner`). The pre-push quality gate is
 `just check` + `just test`, or the full `tox` matrix.
 CI is **GitHub Actions** (`.github/workflows/ci.yml`): on push to `main` and on
-PRs it runs the `checks` env and the py310–313 test matrix via
+PRs it runs the `checks` env and the py310–314 test matrix via
 `uvx --with tox-uv tox` — the same tox envs you run locally.
 
 ## Conventions
