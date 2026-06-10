@@ -62,6 +62,8 @@ class Sanitizer:
                          attributes via `vars()`, so every attribute whose name is not in
                          `keys` passes through. `"deny"` instead replaces the whole object
                          with `replacement`, so unrecognised objects are masked by default.
+                         Scalars (`None`, numbers, strings) are not objects and always pass
+                         through regardless of this setting.
                          An object exposing `__sanitary_context__` is always narrowed to
                          that representation regardless of this setting.
 
@@ -124,6 +126,14 @@ class Sanitizer:
     @sanitize.register(float)
     @sanitize.register(int)
     def _sanitize_number(self, data):
+        return data
+
+    @sanitize.register(type(None))
+    def _sanitize_none(self, data):
+        # `None` is a scalar absence-of-value, not an unknown object, so it passes
+        # through untouched in every mode. In particular `unknown_objects="deny"`
+        # must not mask it: redacting `None` would imply a sensitive value was
+        # present where there was none.
         return data
 
     @sanitize.register

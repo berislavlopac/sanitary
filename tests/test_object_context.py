@@ -72,6 +72,15 @@ def test_vars_mode_walks_hookless_object_by_default():
     assert cleaned == {"note": "free text", "secret": "********"}
 
 
+@pytest.mark.parametrize("unknown_objects", ["vars", "deny"])
+def test_none_passes_through_unmasked(unknown_objects):
+    # None is a scalar absence-of-value, not an unknown object; deny must not mask it.
+    sanitizer = Sanitizer(unknown_objects=unknown_objects)
+
+    assert sanitizer.sanitize(None) is None
+    assert sanitizer.sanitize({"maybe": None, "id": "x"}) == {"maybe": None, "id": "x"}
+
+
 def test_invalid_unknown_objects_raises():
     with pytest.raises(ValueError, match="unknown_objects"):
         Sanitizer(unknown_objects="nonsense")
