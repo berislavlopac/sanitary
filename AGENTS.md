@@ -82,6 +82,26 @@ PRs it runs the `checks` env and the py310–313 test matrix via
   and a reason. `F841` is delegated to `vulture` (the `external` list).
 - **Docstrings: Google convention** (enforced by `pydocstyle`; `D105/D107/D212/D401`
   ignored). Markdown in docstrings, single backticks for inline code.
+- Mark intentionally-unused names with `# noqa: F841` (so vulture ignores them),
+  not by underscore-prefixing.
+- ASCII-only in code (identifiers, strings, comments). Typographic characters
+  (em-dashes, smart quotes) belong in docs and prose, not in code.
+
+## Working conventions
+
+- Small, focused commits. Lowercase imperative subject; optional body explaining
+  the *why*, not the *what*.
+- **No `Co-Authored-By` footer.**
+- Branch names use only `-` as a separator, never `/`.
+- On a long-running WIP branch, commit locally; don't push every commit (it
+  spams CI and notifications).
+- Keep PR descriptions scoped to the change - no "future work" / "next steps"
+  section.
+- Finish PR work with a neutral-reviewer pass over your own diff.
+- Review comments detach on force-push/rebase - warn before rewriting history on
+  a PR that already has feedback; prefer a merge.
+- Stay on the task at hand - note an incidental or unrelated issue in one line
+  and move on, rather than rabbit-holing into it.
 
 ## Docs
 
