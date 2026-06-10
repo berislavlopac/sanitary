@@ -34,6 +34,7 @@ The `Sanitizer` class accepts the following arguments:
     2. A callable which takes a string as its single argument and returns another string, which will replace the value.
     3. A callable which takes a bytes object as its single argument and returns a "hash object"; this allows using the [`hashlib`](https://docs.python.org/3/library/hashlib.html) functions to mask the data. 
 * `message`: The textual message which will replace the value that matches any of the defined patterns.
+* `unknown_objects`: How to handle an object of an unrecognised type that does not expose a `__sanitary_context__` hook — `"vars"` (the default) walks its attributes, or `"deny"` replaces the whole object with the replacement value. See [Arbitrary Objects](#arbitrary-objects).
 
 
 ## Data Hashing
@@ -61,9 +62,9 @@ Sanitizer can also clean up any text values that match specific regular expressi
 >>> from sanitary import Sanitizer
 >>> sanitizer = Sanitizer(patterns={r"""'Authentication':"""})
 >>> sanitizer.sanitize("'Authentication': 1234")
-"#### WARNING: Message replaced due to sensitive pattern: 'Authentication':"
+'#### WARNING: Message replaced due to sensitive information.'
 >>> sanitizer.sanitize({"example": "'Authentication': 1234"})
-{'example': "#### WARNING: Message replaced due to sensitive pattern: 'Authentication':"}
+{'example': '#### WARNING: Message replaced due to sensitive information.'}
 >>>
 ```
 

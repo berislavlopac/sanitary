@@ -1,8 +1,10 @@
 # AGENTS.md
 
-Guidance for AI agents (and humans) working on **sanitary**. Complements
-`README.md` and the docs under `docs/`. This file is about *how to work in this
-repo* — conventions, commands, and the public contract that must not break.
+**This file is for AI agents.** Human contributors should read
+[`CONTRIBUTE.md`](CONTRIBUTE.md), which covers the same workflow for people; this file
+restates the project rules in a form aimed at agents. It complements `README.md` and
+the docs under `docs/`, and is about *how to work in this repo* — conventions,
+commands, and the public contract that must not break.
 
 ## What this is
 
@@ -140,7 +142,7 @@ and creates a GitHub Release whose notes come from the new `CHANGELOG.md` sectio
 
 ## Docs
 
-Docs live in `docs/` (mkdocs + Material + `mkapi`), hosted on readthedocs, and
+Docs live in `docs/` (mkdocs + MaterialX + `mkapi`), hosted on readthedocs, and
 `docs/index.md` doubles as the PyPI long description (`readme = "docs/index.md"`
 in `pyproject.toml`). `docs/reference.md` autogenerates the API reference from
 docstrings via `mkapi` `:::` directives, so keep docstrings accurate, and update
