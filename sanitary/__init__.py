@@ -44,7 +44,6 @@ class Sanitizer:
     Base class for sensitive data sanitizers.
 
     Args:
-
         keys: Collection of keys to sanitize, matched by exact name (case-insensitively).
               Will be normalized to lowercase.
         patterns: Collection of regular expression patterns; will be compiled using
