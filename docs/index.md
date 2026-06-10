@@ -29,6 +29,7 @@ The `Sanitizer` class accepts the following arguments:
 
 * `keys`: An iterator of key names that will be searched for recursively. Any of these keys will have its value replaced by the replacement value.
 * `patterns`: An iterator of regular expression patterns that will be used to search the textual values. A value that matches any of the patterns will be entirely replaced by the message value.
+* `key_patterns`: An iterator of regular expression patterns matched against *key names* (the key-name analogue of `patterns`). Any key whose name matches has its value replaced by the replacement value, so a single rule can cover many related keys. See [Matching Keys by Pattern](#matching-keys-by-pattern).
 * `replacement`: Can be any of the following types of values:
     1. A plain text, which will simply replace the sensitive value.
     2. A callable which takes a string as its single argument and returns another string, which will replace the value.
@@ -67,6 +68,26 @@ Sanitizer can also clean up any text values that match specific regular expressi
 {'example': '#### WARNING: Message replaced due to sensitive information.'}
 >>>
 ```
+
+## Matching Keys by Pattern
+
+While `keys` matches **key names exactly** (case-insensitively), `key_patterns` matches
+key names by regular expression — the key-name analogue of `patterns`. This lets a
+single rule cover a whole family of related keys instead of enumerating every variant,
+and (like `keys`) it recurses into nested structures:
+
+```python
+>>> from sanitary import Sanitizer
+>>> sanitizer = Sanitizer(key_patterns={r"secret", r"token"})
+>>> sanitizer.sanitize({"aws_secret_access_key": "x", "refresh_token": "y", "username": "safe"})
+{'aws_secret_access_key': '********', 'refresh_token': '********', 'username': 'safe'}
+```
+
+Patterns are matched against the key name as written, so add an inline `(?i)` flag (or
+compile with `re.IGNORECASE`) if you need case-insensitive matching, and anchor the
+pattern (e.g. `r"_token$"`) to avoid over-matching. `key_patterns` only ever inspects
+key *names*; a matching string appearing in a *value* is left alone unless its own key
+matches.
 
 ## JSON-Encoded Values
 

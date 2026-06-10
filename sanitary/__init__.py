@@ -44,9 +44,16 @@ class Sanitizer:
     Base class for sensitive data sanitizers.
 
     Args:
-        keys: Collection of keys to sanitize. Will be normalized to lowercase.
+
+        keys: Collection of keys to sanitize, matched by exact name (case-insensitively).
+              Will be normalized to lowercase.
         patterns: Collection of regular expression patterns; will be compiled using
-                  `re.compile`.
+                  `re.compile`. Matched against string *values*.
+        key_patterns: Collection of regular expression patterns matched against *key
+                      names* (compiled like `patterns`). A key whose name matches any of
+                      them has its value replaced, letting a single rule cover many keys
+                      (e.g. `secret` for `secret`, `aws_secret_access_key`, ...). Matched
+                      against the key as written, so include `(?i)` for case-insensitivity.
         replacement: A string or callable to be used to replace the value. A callable must
                      either accept and return a `str` value, or accept a `bytes` object
                      and return an object compatible with the `hashlib` function.
@@ -63,11 +70,13 @@ class Sanitizer:
         ValueError: If `unknown_objects` is not `"vars"` or `"deny"`.
     """
 
-    def __init__(
+    # All parameters are keyword-only public configuration options.
+    def __init__(  # noqa: PLR0913
         self,
         *,
         keys: Iterable[str] = (),
         patterns: Iterable[Pattern[AnyStr]] = (),
+        key_patterns: Iterable[Pattern[AnyStr]] = (),
         replacement: ReplacementType = "********",
         message: str = "#### WARNING: Message replaced due to sensitive information.",
         unknown_objects: UnknownObjects = "vars",
@@ -80,6 +89,7 @@ class Sanitizer:
         self.replacement: ReplacementType = replacement
         self.keys: set = set(map(str.lower, keys))
         self.patterns: set[Pattern[AnyStr]] = set(map(re.compile, patterns))  # type: ignore
+        self.key_patterns: set[Pattern[AnyStr]] = set(map(re.compile, key_patterns))  # type: ignore
         self.message: str = message
         self.unknown_objects: UnknownObjects = unknown_objects
 
@@ -146,15 +156,19 @@ class Sanitizer:
 
     @sanitize.register
     def _sanitize_dict(self, data: dict):
-        sensitive_fields = {field.lower() for field in self.keys}
         cleaned_data = ChainMap({}, data)
         for key, value in cleaned_data.items():
             cleaned_data[key] = (
                 _replace(value, self.replacement)
-                if key.lower() in sensitive_fields
+                if self._is_sensitive_key(key)
                 else self.sanitize(value)
             )
         return dict(cleaned_data)
+
+    def _is_sensitive_key(self, key: str) -> bool:
+        if key.lower() in self.keys:
+            return True
+        return any(pattern.search(key) for pattern in self.key_patterns)  # type: ignore
 
 
 def _replace(value: Any, replacement: ReplacementType):

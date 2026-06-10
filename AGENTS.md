@@ -39,13 +39,16 @@ deliberate decision — staying dependency-free is a feature of this library.
 ## Public API (the contract)
 
 `Sanitizer` and `StructlogSanitizer`, constructed with keyword-only
-`keys` / `patterns` / `replacement` / `message` / `unknown_objects`. Semantics that
-callers rely on:
+`keys` / `patterns` / `key_patterns` / `replacement` / `message` / `unknown_objects`.
+Semantics that callers rely on:
 
 - `keys` match **by exact name, case-insensitively** (not substring) and recurse
   into nested structures; matched values are replaced with `replacement`.
 - `patterns` are regexes matched against **string values**; a match replaces the
   whole value with `message`.
+- `key_patterns` are regexes matched against **key names** (the key-name analogue
+  of `patterns`); a match replaces that key's value with `replacement`. Matched
+  against the key as written (case-sensitive unless the regex says otherwise).
 - `replacement` may be a string or a callable (incl. a `hashlib` function, for
   trackable hashing).
 - An object exposing a **`__sanitary_context__`** hook (a dict, or a
