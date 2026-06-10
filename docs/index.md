@@ -12,6 +12,8 @@ Sanitizer needs to be installed like any other Python package:
 > pip install sanitary
 ```
 
+The installed version is available as `sanitary.__version__`.
+
 ## Base Usage
 
 The first step is to instantiate a `Sanitizer` object:
