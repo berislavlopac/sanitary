@@ -30,7 +30,7 @@ documentation = "https://sanitary.readthedocs.io"
 docs = [
   "mkdocs",
   "mkapi",
-  "mkdocs-material",
+  "mkdocs-materialx",
   "pymdown-extensions",
   "jinja2 >= 3.1.3",
 ]
@@ -136,7 +136,7 @@ match-dir = "(?!tests).*"
 DEP002 = [
     "mkdocs",
     "mkapi",
-    "mkdocs-material",
+    "mkdocs-materialx",
     "pymdown-extensions",
     "jinja2",
 ]

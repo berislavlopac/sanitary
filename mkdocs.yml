@@ -5,7 +5,7 @@ site_description: Utility to remove or replace sensitive data from complex struc
 site_author: Berislav Lopac <berislav@lopac.net>
 use_directory_urls: false
 theme:
-  name: material
+  name: materialx
   icon:
     logo: fontawesome/solid/pump-soap
 #  favicon: assets/plunger-favicon.png
