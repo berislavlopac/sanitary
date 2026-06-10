@@ -10,6 +10,13 @@ into a dated section by `towncrier` at release time — see `just release`.
 
 <!-- towncrier release notes start -->
 
+## [0.2.1] - 2026-06-11
+
+### Fixed
+
+- `None` now passes through untouched under `unknown_objects="deny"` instead of being masked with `replacement`; like other scalars it is an absence-of-value, not an unknown object to deny. (#5)
+
+
 ## [0.2.0] - 2026-06-11
 
 ### Breaking Changes
