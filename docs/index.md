@@ -67,6 +67,31 @@ Sanitizer can also clean up any text values that match specific regular expressi
 >>>
 ```
 
+## JSON-Encoded Values
+
+Sometimes a structure is stored or logged as a JSON string rather than as a native
+object. When a string value looks like a JSON object or array — i.e. it starts with
+`{` or `[` after stripping whitespace — Sanitizer parses it and sanitizes the
+decoded structure, so sensitive data hidden inside a serialized blob is still masked.
+
+```python
+>>> from sanitary import Sanitizer
+>>> sanitizer = Sanitizer(keys={"password"})
+>>> sanitizer.sanitize({"body": '{"password": "hunter2", "user": "alice"}'})
+{'body': {'password': '********', 'user': 'alice'}}
+```
+
+Any other string is left untouched (apart from pattern matching against its value).
+In particular, strings that merely *look* like JSON scalars are **not** parsed, so
+their type is preserved:
+
+```python
+>>> sanitizer.sanitize("12345")
+'12345'
+>>> sanitizer.sanitize("true")
+'true'
+```
+
 ## Structlog Processor
 
 The special subclass, `StructlogSanitizer`, is provided to enable sanitizing the logging context managed by the [`structlog`](https://www.structlog.org) library. It needs to be instantiated and added to the list of configured [processors](https://www.structlog.org/en/stable/processors.html):

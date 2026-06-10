@@ -109,6 +109,33 @@ def test_set_value_is_cleaned_correctly():
     assert cleaned_field[2] == "http"
 
 
+def test_json_encoded_structure_is_still_walked():
+    data = '{"str_field": "Bearer sensitive_info_auth_token", "event": "some random text"}'
+
+    cleaned_data = Sanitizer(patterns=SENSITIVE_PATTERNS).sanitize(data)
+
+    assert cleaned_data["str_field"].startswith("#### WARNING:")
+    assert cleaned_data["event"] == "some random text"
+
+
+def test_json_encoded_array_is_still_walked():
+    data = '["http", "Bearer sensitive_info_auth_token", "blabla"]'
+
+    cleaned_data = Sanitizer(patterns=SENSITIVE_PATTERNS).sanitize(data)
+
+    assert cleaned_data[0] == "http"
+    assert cleaned_data[1].startswith("#### WARNING:")
+    assert cleaned_data[2] == "blabla"
+
+
+def test_scalar_string_is_not_json_parsed():
+    # Strings that do not start with `{`/`[` are never handed to json.loads, so
+    # bare JSON scalars are left as plain strings instead of being coerced.
+    assert Sanitizer().sanitize("12345") == "12345"
+    assert Sanitizer().sanitize("true") == "true"
+    assert Sanitizer().sanitize("null") == "null"
+
+
 def test_object_without_dict_is_cleaned_correctly():
     class FooClass:
         __slots__ = []

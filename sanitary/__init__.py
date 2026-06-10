@@ -87,15 +87,20 @@ class Sanitizer:
 
     @sanitize.register
     def _sanitize_str(self, data: str):
-        try:
-            data = json.loads(data)
-        except json.JSONDecodeError:
-            for sensitive_pattern in self.patterns:
-                if sensitive_pattern.search(data):  # type: ignore
-                    return self.message
-            return data
-        else:
-            return self.sanitize(data)
+        # Only attempt to parse strings that plausibly hold a JSON object or array, so
+        # that real JSON structures are still walked while plain text (the common case at
+        # high log volume) skips the parse cost and goes straight to pattern matching.
+        if data.strip().startswith(("{", "[")):
+            try:
+                parsed = json.loads(data)
+            except json.JSONDecodeError:
+                pass
+            else:
+                return self.sanitize(parsed)
+        for sensitive_pattern in self.patterns:
+            if sensitive_pattern.search(data):  # type: ignore
+                return self.message
+        return data
 
     @sanitize.register(set)
     @sanitize.register(tuple)
