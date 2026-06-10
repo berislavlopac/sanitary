@@ -92,6 +92,49 @@ their type is preserved:
 'true'
 ```
 
+## Arbitrary Objects
+
+When Sanitizer encounters an object of a type it does not otherwise recognise, by
+default it walks the object's attributes (via `vars()`) and sanitizes them like a
+dictionary. This means any attribute whose *name* is not in `keys` passes through —
+including bulky or sensitive content under innocuous names.
+
+An object can take control of its own representation by exposing a
+`__sanitary_context__` hook — a `dict` (or a callable/property returning one) of the
+fields that are safe to expose. When present, Sanitizer sanitizes that mapping instead
+of the object's raw attributes, letting the class both *select* and *rename* fields:
+
+```python
+>>> from sanitary import Sanitizer
+>>> class Document:
+...     def __init__(self):
+...         self.id = "doc-123"
+...         self.body = "free text that should not be logged"
+...         self.secret = "s3cr3t"
+...     def __sanitary_context__(self):
+...         return {"document_id": self.id, "secret": self.secret}
+>>> Sanitizer(keys={"secret"}).sanitize(Document())
+{'document_id': 'doc-123', 'secret': '********'}
+```
+
+For defence in depth, the `unknown_objects` argument controls what happens to an object
+that does *not* expose the hook. The default, `"vars"`, walks its attributes as described
+above. `"deny"` instead replaces any such object wholesale with the `replacement` value,
+so unrecognised objects are masked by default rather than relying on every attribute name
+being on the `keys` denylist:
+
+```python
+>>> class Plain:
+...     def __init__(self):
+...         self.note = "ok"
+...         self.password = "hunter2"
+>>> Sanitizer(unknown_objects="deny").sanitize(Plain())
+'********'
+```
+
+Objects exposing `__sanitary_context__` are always narrowed to that representation,
+regardless of the `unknown_objects` setting.
+
 ## Structlog Processor
 
 The special subclass, `StructlogSanitizer`, is provided to enable sanitizing the logging context managed by the [`structlog`](https://www.structlog.org) library. It needs to be instantiated and added to the list of configured [processors](https://www.structlog.org/en/stable/processors.html):

@@ -37,7 +37,8 @@ deliberate decision — staying dependency-free is a feature of this library.
 ## Public API (the contract)
 
 `Sanitizer` and `StructlogSanitizer`, constructed with keyword-only
-`keys` / `patterns` / `replacement` / `message`. Semantics that callers rely on:
+`keys` / `patterns` / `replacement` / `message` / `unknown_objects`. Semantics that
+callers rely on:
 
 - `keys` match **by exact name, case-insensitively** (not substring) and recurse
   into nested structures; matched values are replaced with `replacement`.
@@ -45,6 +46,11 @@ deliberate decision — staying dependency-free is a feature of this library.
   whole value with `message`.
 - `replacement` may be a string or a callable (incl. a `hashlib` function, for
   trackable hashing).
+- An object exposing a **`__sanitary_context__`** hook (a dict, or a
+  callable/property returning one) is narrowed to that mapping before sanitizing.
+- `unknown_objects` (`"vars"` default, or `"deny"`) controls hookless unknown
+  objects: walk attributes via `vars()`, or replace the whole object with
+  `replacement`. Default is back-compatible; an invalid value raises `ValueError`.
 
 Keep these behaviours stable; update `docs/` and add a release-notes fragment
 (`just news`, see Releasing) on any change.
