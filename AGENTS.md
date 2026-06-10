@@ -60,7 +60,7 @@ Keep these behaviours stable; update `docs/` and `CHANGELOG.md` on any change.
 | `just test` | Unit tests (`pytest --spec`). |
 | `just test-cov` | Tests with coverage (floor is **90%**). |
 | `just lint` | `deptry` + `ruff format --check` + `ruff check` + `pydocstyle`. |
-| `just type` | `mypy` over `sanitary/`. |
+| `just type` | `pyrefly` over `sanitary/`. |
 | `just analyze` | `vulture` (dead code) + `radon` (maintainability). |
 | `just check` | `lint` + `type` + `analyze` — the pre-push gate. |
 | `just reformat` | Auto-fix format + import order (`[confirm]` recipe). |
@@ -76,7 +76,9 @@ PRs it runs the `checks` env and the py310–313 test matrix via
 
 ## Conventions
 
-- **Type checker is `mypy`** (not pyright/ty). `mypy_path = sanitary/`.
+- **Type checker is `pyrefly`** (not mypy/pyright/ty). Config in `[tool.pyrefly]`
+  (`project-includes = ["sanitary/"]`, `search-path = ["."]`). It honours
+  `# type: ignore` comments.
 - **`ruff` is linter + formatter**, line length **96**. The lint `select` set in
   `pyproject.toml` is the contract; don't disable rules without a `# noqa: <code>`
   and a reason. `F841` is delegated to `vulture` (the `external` list).

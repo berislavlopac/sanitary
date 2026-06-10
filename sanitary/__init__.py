@@ -113,11 +113,11 @@ def _replace(value: Any, replacement: ReplacementType):
     if callable(replacement):
         value = str(value)
         if replacement in HASHLIB_FUNCTIONS:
-            replaced = cast(HashObjectProtocol, replacement(value.encode()))
+            replaced = cast(HashObjectProtocol, replacement(value.encode()))  # type: ignore
             if replacement in (hashlib.shake_128, hashlib.shake_256):
                 return replaced.hexdigest(256)
             return replaced.hexdigest()
-        return replacement(value)
+        return replacement(value)  # type: ignore
     return replacement
 
 

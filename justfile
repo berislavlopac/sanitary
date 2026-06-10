@@ -19,7 +19,7 @@ lint:
 
 # Run static typing analysis.
 type:
-    uv run mypy --install-types --non-interactive sanitary/
+    uv run pyrefly check sanitary/
 
 # Run security checks.
 analyze:

@@ -45,7 +45,7 @@ test = [
     "pytest",
     "pytest-cov",
     "pytest-spec",
-    "mypy",
+    "pyrefly",
     "structlog",
     "tox>=4.26.0",
     "tox-uv>=1.25.0",
@@ -123,9 +123,9 @@ show_missing = true
 fail_under = 90
 exclude_lines = ["pragma: no cover", "@abstract", "if TYPE_CHECKING:"]
 
-[tool.mypy]
-mypy_path = "sanitary/"
-ignore_missing_imports = true
+[tool.pyrefly]
+project-includes = ["sanitary/"]
+search-path = ["."]
 
 [tool.pydocstyle]
 add-ignore = "D105, D107, D212, D401"
@@ -153,7 +153,7 @@ groups = ["test"]
 commands = [
     ["pytest", "--cov", "--spec", "--junitxml=test-reports{/}{envname}-junit.xml"],
     ["coverage", "xml", "-o", "test-reports{/}{envname}-coverage.xml"],
-    ["mypy", "--install-types", "--non-interactive", "sanitary/"],
+    ["pyrefly", "check", "sanitary/"],
 ]
 
 [tool.tox.env.checks]
