@@ -1,1 +1,0 @@
-Add support for Python 3.14 (now covered by the test matrix and the package classifiers).
